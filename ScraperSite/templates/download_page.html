@@ -1,0 +1,31 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Download Page</title>
+    <link rel="stylesheet" href="{% static 'styles.css'%}">
+  </head>
+  <body>
+    <div class="downloadHeader">
+      <h1>Your CSV</h1>
+    </div>
+    <div class="downloadButtons">
+      <h1>{{"query"}}</h1>
+      <button class="btn" onclick = "history.back()">Scrape Another Page</button>
+      <button class="btn" id="downloadCSV">Download CSV</button>
+    </div>
+  </body>
+</html>
+
+<script type="text/javascript">
+  const getReport = async function() {
+    alert('csv downloaded')
+  };
+
+  (function() {
+    const downloadButton = document.getElementById('downloadCSV');
+    downloadButton.addEventListener('click', getReport);
+  })();
+</script>

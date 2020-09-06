@@ -1,0 +1,51 @@
+body {
+  background-color: #252525;
+}
+
+body * {
+  font-family: Roboto;
+}
+
+h1, h2, h3, h4, h5 {
+  font-weight: bold;
+  color: #E5E5E5;
+}
+
+.container {
+  margin-top: 250px;
+  margin-bottom: 250px;
+}
+
+.header {
+  text-align: center;
+}
+
+.searchbar {
+  margin: auto;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.buttons {
+  margin: auto;
+  text-align: center;
+}
+
+.description {
+  text-align: center;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: hidden;
+  color: #E5E5E5;
+}
+
+.credits {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #535353;
+}
+
+.instructions {
+  color: #E5E5E5;
+}

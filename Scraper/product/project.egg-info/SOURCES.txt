@@ -1,0 +1,16 @@
+setup.py
+product/__init__.py
+product/items.py
+product/middlewares.py
+product/pipelines.py
+product/settings.py
+product/tableclean.py
+product/spiders/__init__.py
+product/spiders/bestsellers_spider.py
+product/spiders/search_spider.py
+product/spiders/test_spider.py
+project.egg-info/PKG-INFO
+project.egg-info/SOURCES.txt
+project.egg-info/dependency_links.txt
+project.egg-info/entry_points.txt
+project.egg-info/top_level.txt

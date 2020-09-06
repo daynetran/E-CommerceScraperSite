@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Amazon Scraper</title>
+    <link rel="stylesheet" href="{% static 'styles.css'%}">
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Amazon Scraper</h1>
+      </div>
+      <div class="searchbar">
+        <form method="get">
+          <input type="text" id="text1" placeholder="Search..." style="width: 300px; height: 20px">
+        </form>
+      </div>
+      <div class="buttons">
+        <button class="btn" id="generateCSV" onclick = "readInput()" onclick = "location.href='download_page/'">Scrape</button>
+        <button class="btn" onclick = "location.href='help/'">Help</button>
+      </div>
+      <div class="description">
+        <p> Enter the link to an Amazon bestseller page and we will generate a CSV
+        file containing information from the top 100 results. </p>
+      </div>
+    </div>
+    <div class="credits">
+      <p> Made by Sean Lin, Dayne Tran, Marlon Fu</p>
+    </div>
+  </body>
+</html>
+
+<script type="text/javascript">
+
+  function readInput() {
+    var str = document.getElementById("text1").value;
+    alert("Value inside the text box is: " + str)
+  }
+</script>

@@ -1,0 +1,130 @@
+import scrapy
+from scrapy.spiders import CrawlSpider
+from ..items import ProductItem
+first_urls = dict()
+second_urls = dict()
+x = input('Please enter Amazon bestselling url here: ')
+y = input('Please enter the name of the csv: ____.csv ')
+
+
+class BestSellerSpider(CrawlSpider):
+    name = 'bestsellers'
+
+    custom_settings = {
+        "FEED_FORMAT": "csv",
+        "FEED_URI": "{}.csv".format(y)
+    }
+
+    """This spider will take the the category page of Best Sellers and parse it for URLs of the two pages (1-50, 51-100
+    ). Then, for each product page, we will find the urls to to each product For each url, we will parse the product 
+    page for our desired information. This means three levels of crawling, the best-selling page, then the two product 
+    pages, and then the products' individual pages."""
+
+    start_urls = [
+        x
+    ]
+
+    def parse(self, response):
+        """parse is a built-in function that Scrapy spiders require in order to sort through the page. We extract the
+         links for the bestselling pages on Amazon."""
+
+        # Parses Amazon's bestselling page for the two page urls.
+        first_page = response.css("ul.a-pagination li.a-selected").css("::attr(href)").get()
+        second_page = response.css("ul.a-pagination li.a-normal").css("::attr(href)").get()
+
+        # Retrieves the product urls from the pages by calling get_x_page
+        yield response.follow(first_page, callback=parse_1st_page)
+        yield response.follow(second_page, callback=parse_2nd_page)
+
+
+def parse_1st_page(response):
+    """get_1st_page is our function that scrapes the product urls of the top 50 products from Amazon's first
+    best-selling page. It stores the urls in the first_urls dictionary"""
+
+    urls = response.css("span.zg-item > a.a-link-normal:not(a.a-text-normal)::attr(href)").getall()
+    for index, url in enumerate(urls):
+        first_urls[index+1] = url
+
+
+def parse_2nd_page(response):
+    """get_2nd_page is our function that scrapes the product urls of the 51-100 products from Amazon's second
+    best-selling page. It stores the urls in the second_urls dictionary, then combines first_urls and second_urls
+    into a dictionary called all_urls. Then for each url in all_urls, it goes to the product page and calls
+    follow_product_parse."""
+
+    urls = response.css("span.zg-item > a.a-link-normal:not(a.a-text-normal)::attr(href)").getall()
+    for index, url in enumerate(urls):
+        second_urls[index+51] = url
+    x = first_urls
+    all_urls = {**x, **second_urls}
+    for index, product_url in enumerate(all_urls.values()):
+        yield response.follow("http://amazon.com" + product_url, callback=follow_product_parse, meta={'index': index + 1})
+
+
+def follow_product_parse(response):
+    """This function is applied to every url we find in parse. It gives us the information we want for each product
+    from their product pages."""
+
+    # Initializes the Item that will receive the information from the parsing
+    items = ProductItem()
+
+    # Assigns the various desired features of our product page to corresponding variables
+    name = response.css("#productTitle").css("::text").extract()
+    if not name:
+        name = response.css(".feature_Title ::text").extract()
+    if not name:
+        name = response.css(".qa-title-text ::text").extract()
+
+    description = response.css("#feature-bullets > ul > li:not(#replacementPartsFitmentBullet)").css(
+        '::text').extract()
+    if not description:
+        description = response.css(".qa-bullet-point-list-element").css("::text").extract()
+
+    price = response.css("#priceblock_saleprice, #priceblock_ourprice").css("::text").extract()
+    if not price:
+        price = response.css(".qa-price-block-our-price").css("::text").extract()
+    if not price:
+        price = response.css("#priceblock_dealprice::text").extract()
+    if not price:
+        price = response.css("#priceblock_pospromoprice::text").extract()
+
+    brand = response.css("#bylineInfo::text").extract()
+    if not brand:
+        brand = response.css(".qa-byline-url::text").extract()
+
+    rating = response.css("span[data-hook = 'rating-out-of-text']::text").extract()
+
+    num_reviews = response.css("#acrCustomerReviewText::text").extract_first()
+    if not num_reviews:
+        num_reviews = response.css(".qa-average-customer-rating-review-text::text").extract()
+
+    link = response.css("link[rel = 'canonical']").css("::attr(href)").extract()
+
+    list_price = response.css(".priceBlockStrikePriceString::text").extract_first()
+
+    # Strips unnecessary blank space from the text
+    for i in range(len(name)):
+        name[i] = name[i].strip()
+    for i in range(len(description)):
+        description[i] = description[i].strip()
+
+    # Assign values to the Scrapy item
+    if name:
+        items['name'] = name
+    if description:
+        items['description'] = description
+    if price:
+        items['price'] = price
+    if brand:
+        items['brand'] = brand
+    if rating:
+        items['rating'] = rating
+    if num_reviews:
+        items['num_reviews'] = num_reviews
+    if link:
+        items['link'] = link
+    if list_price:
+        items['list_price'] = list_price
+    items['rank'] = str(response.meta['index'])
+
+    yield items

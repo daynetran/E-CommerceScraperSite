@@ -1,0 +1,24 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Help</title>
+    <link rel="stylesheet" href="{% static 'styles.css'%}">
+  </head>
+  <body>
+    <h1>Help</h1>
+  
+    <div class="instructions">
+      <p>Begin by navigating to the Amazon bestseller page from which
+      you wish to scrape.</p>
+      <p>Next, copy the url and paste it into our search bar, then press "Scrape".</p>
+      <p>You will then be redirected to another page where you may view and
+        download your CSV file.</p>
+    </div>
+    <div class="backButton">
+      <button class="btn" onclick = "history.back()">Back to Scraper</button>
+    </div>
+  </body>
+</html>
