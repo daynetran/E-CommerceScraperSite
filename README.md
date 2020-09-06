@@ -6,4 +6,4 @@ I wrote a Python script that when given a URL, it can scrape the 100 best-sellin
 
 The main targets for this project are mid-sized and small businesses who sell products online but do not have the resources to better understand the e-commerce landscape and the markets they are competing in.
 
-You can also use my personal website, daynetran.github.io, as another source to review. Thanks!
+You can also use my personal website, https://daynetran.github.io, as another source to review. Thanks!
